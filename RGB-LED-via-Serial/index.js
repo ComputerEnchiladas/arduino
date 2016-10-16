@@ -11,6 +11,38 @@ var serial = require('serialport')
   , redOn = false
   , blueOn = false;
 
+function turnOnRed(){
+  arduino.write('RED\n');
+  redLED.writeSync(1);
+  greenLED.writeSync(0);
+  blueLED.writeSync(0);
+}
+function turnOnGreen(){
+  arduino.write('GREEN\n');
+  redLED.writeSync(0);
+  greenLED.writeSync(1);
+  blueLED.writeSync(0);
+
+}
+function turnOnBlue(){
+  arduino.write('BLUE\n');
+  redLED.writeSync(0);
+  greenLED.writeSync(0);
+  blueLED.writeSync(1);
+}
+function turnOnWhite(){
+  arduino.write('WHITE\n');
+  redLED.writeSync(1);
+  greenLED.writeSync(1);
+  blueLED.writeSync(1);
+}
+function turnOff(){
+  arduino.write('OFF\n');
+  redLED.writeSync(0);
+  greenLED.writeSync(0);
+  blueLED.writeSync(0);
+}
+
 arduino.on('open', function(){
   console.log('PORT OPEN');
 });
@@ -23,28 +55,16 @@ red.setActiveLow( true );
 red.watch(function(err, value) {
   if( value ) {
     if( blueOn ) {
-      arduino.write('GREEN\n');
-      redLED.writeSync(0);
-      blueLED.writeSync(0);
-      greenLED.writeSync(1);
+      turnOnGreen();
     } else {
-      arduino.write('RED\n');
-      redLED.writeSync(1);
-      blueLED.writeSync(0);
-      greenLED.writeSync(0);
+      turnOnRed();
     }
     redOn = true;
   } else {
     if( blueOn ) {
-      redLED.writeSync(0);
-      greenLED.writeSync(0);
-      blueLED.write(1);
-      arduino.write('BLUE\n');
+      turnOnBlue();
     } else {
-      arduino.write('OFF\n');
-      greenLED.writeSync(0);
-      redLED.writeSync(0);
-      blueLED.writeSync(0);
+      turnOff();
     }
     redOn = false;
   }
@@ -54,32 +74,46 @@ blue.setActiveLow( true );
 blue.watch(function(err, value) {
   if( value ) {
     if( redOn ) {
-      greenLED.writeSync(1);
-      arduino.write('GREEN\n');
-      redLED.writeSync(0);
-      blueLED.writeSync(0);
-
+      turnOnGreen();
      } else if( value ) {
-      redLED.writeSync(0);
-      greenLED.writeSync(0);
-      blueLED.write(1);
-      arduino.write('BLUE\n');
+      turnOnBlue();
     } 
     blueOn = true;
   } else {
     if( redOn ) {
-      arduino.write('RED\n');
-      redLED.writeSync(1);
-      blueLED.writeSync(0);
-      greenLED.writeSync(0);
+      turnOnRed();
     } else {
-      blueLED.writeSync(0);
-      greenLED.writeSync(0);
-      redLED.writeSync(0);
-      arduino.write('OFF\n');
+      turnOff();
     }
     blueOn = false;
   }
+});
+
+var http = require('http')
+  , server = http.createServer( handler )
+  , io = require('socket.io')( server );
+
+function handler( request, reply ) {
+  reply.writeHead(200);
+  reply.end('Running!');
+}
+
+io.on('connection', function( socket ) {
+  socket.on('event:led:red', function(){
+    turnOnRed();
+  });
+  socket.on('event:led:green', function(){
+    turnOnGreen();
+  });
+  socket.on('event:led:blue', function(){
+    turnOnGreen();
+  });
+  socket.on('event:led:white', function(){
+    turnOnWhite();
+  });
+  socket.on('event:leds:off', function(){
+    turnOff();
+  });
 });
 
 process.on('SIGINT', function(){
