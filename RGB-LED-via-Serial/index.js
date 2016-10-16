@@ -36,6 +36,12 @@ function turnOnWhite(){
   greenLED.writeSync(1);
   blueLED.writeSync(1);
 }
+function turnOnYellow(){
+  arduino.write('YELLOW\n');
+  redLED.writeSync(1);
+  greenLED.writeSync(1);
+  blueLED.writeSync(0);
+}
 function turnOff(){
   arduino.write('OFF\n');
   redLED.writeSync(0);
@@ -98,7 +104,8 @@ function handler( request, reply ) {
   reply.end('Running!');
 }
 
-io.on('connection', function( socket ) {
+io.on('connection', function( socket ) { 
+
   socket.on('event:led:red', function(){
     turnOnRed();
   });
@@ -106,10 +113,13 @@ io.on('connection', function( socket ) {
     turnOnGreen();
   });
   socket.on('event:led:blue', function(){
-    turnOnGreen();
+    turnOnBlue();
   });
   socket.on('event:led:white', function(){
     turnOnWhite();
+  });
+  socket.on('event:led:yellow', function(){
+    turnOnYellow();
   });
   socket.on('event:leds:off', function(){
     turnOff();
