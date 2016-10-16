@@ -116,6 +116,8 @@ io.on('connection', function( socket ) {
   });
 });
 
+server.listen( 8000, '192.168.0.6' );
+
 process.on('SIGINT', function(){
   red.unexport();
   blue.unexport();
