@@ -35,11 +35,18 @@ red.watch(function(err, value) {
     }
     redOn = true;
   } else {
-    redOn = false;
-    arduino.write('OFF\n');
-    greenLED.writeSync(0);
-    redLED.writeSync(0);
-    blueLED.writeSync(0);
+    if( blueOn ) {
+      redLED.writeSync(0);
+      greenLED.writeSync(0);
+      blueLED.write(1);
+      arduino.write('BLUE\n');
+    } else {
+      redOn = false;
+      arduino.write('OFF\n');
+      greenLED.writeSync(0);
+      redLED.writeSync(0);
+      blueLED.writeSync(0);
+    }
   }
 });
 
@@ -60,11 +67,19 @@ blue.watch(function(err, value) {
     } 
     blueOn = true;
   } else {
-    blueLED.writeSync(0);
-    greenLED.writeSync(0);
-    redLED.writeSync(0);
-    blueOn = false;
-    arduino.write('OFF\n');
+    if( redOn ) {
+      arduino.write('RED\n');
+      redLED.writeSync(1);
+      blueLED.writeSync(0);
+      greenLED.writeSync(0);
+    } else {
+      blueLED.writeSync(0);
+      greenLED.writeSync(0);
+      redLED.writeSync(0);
+      blueOn = false;
+      arduino.write('OFF\n');
+    }
+
   }
 });
 
