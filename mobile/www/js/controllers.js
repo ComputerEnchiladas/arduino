@@ -5,7 +5,6 @@ angular.module('starter.controllers', [])
     switch( color ) {
       case 'red':
         socket.emit('event:led:red');
-        console.log('emit red');
         break;
       case 'green':
         socket.emit('event:led:green');
