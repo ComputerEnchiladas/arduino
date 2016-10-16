@@ -31,6 +31,10 @@ void loop()
       analogWrite(redpin, 0);
       analogWrite(bluepin, 0);
       analogWrite(greenpin, 128);
+    } else if( incomingCommand == "WHITE") {
+      analogWrite(redpin, 128);
+      analogWrite(bluepin, 128);
+      analogWrite(greenpin, 128);
     } else if( incomingCommand == "OFF" ) {
       analogWrite(redpin, 0);
       analogWrite(bluepin, 0);
