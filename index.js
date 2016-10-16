@@ -9,14 +9,8 @@ port.on('open', function(){
 });
 
 port.on('data', function(data){
-  console.log('I RECEIVED: ' + data );
+  console.log( data );
 });
-
-setTimeout( function(){
-  //wait two seconds after opening serial port to begin communications
-  //port.write('BLUE\n');
-}, 2000);
-
 
 var Gpio = require('onoff').Gpio,	//onoff module (use npm install onoff)
   blue = new Gpio(4, 'in', 'both'),
