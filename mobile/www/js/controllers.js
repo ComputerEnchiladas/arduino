@@ -1,6 +1,30 @@
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
+.controller('DashCtrl', function($scope) {
+  $scope.turnOn = function( color ) {
+    switch( color ) {
+      case 'red':
+        socket.emit('event:led:red');
+        console.log('emit red');
+        break;
+      case 'green':
+        socket.emit('event:led:green');
+        break;
+      case 'blue':
+        socket.emit('event:led:blue');
+        break;
+      case 'white':
+        socket.emit('event:led:white');
+        break;
+      case 'yellow':
+        socket.emit('event:led:yellow');
+        break;
+      default:
+        socket.emit('event:leds:off');
+        break;
+    }
+  };
+})
 
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
