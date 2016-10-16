@@ -1,61 +1,62 @@
-var serial = require('serialport');
+var serial = require('serialport')
+  , arduino = new serial('/dev/ttyACM0', {
+      baudRate: 115200
+    })
+  , Gpio = require('onoff').Gpio
+  , red = new Gpio(17, 'in', 'both')
+  , blue = new Gpio(4, 'in', 'both')
+  , redLED = new Gpio(18, 'out')
+  , greenLED = new Gpio(23, 'out')
+  , blueLED = new Gpio(24, 'out')
+  , redOn = false
+  , blueOn = false;
 
-var port = new serial('/dev/ttyACM0', {
-  baudRate: 115200
-});
-
-port.on('open', function(){
+arduino.on('open', function(){
   console.log('PORT OPEN');
 });
 
-port.on('data', function(data){
+arduino.on('data', function(data){
   console.log( data );
 });
 
-var Gpio = require('onoff').Gpio,	//onoff module (use npm install onoff)
-  blue = new Gpio(4, 'in', 'both'),
-  red = new Gpio(17, 'in', 'both'),
-  redOn = false,
-  blueOn = false,
-  redLED = new Gpio(18, 'out'),
-  greenLED = new Gpio(23, 'out'),
-  blueLED = new Gpio(24, 'out');
-
-blue.setActiveLow( true );
 red.setActiveLow( true );
-
-
 red.watch(function(err, value) {
   if( value ) {
     if( blueOn ) {
-      port.write('GREEN\n');
+      arduino.write('GREEN\n');
       redLED.writeSync(0);
       blueLED.writeSync(0);
       greenLED.writeSync(1);
     } else {
-     port.write('RED\n');
-     redLED.writeSync(1);
+      arduino.write('RED\n');
+      redLED.writeSync(1);
+      blueLED.writeSync(0);
+      greenLED.writeSync(0);
     }
     redOn = true;
   } else {
     redOn = false;
-    port.write('OFF\n');
+    arduino.write('OFF\n');
     greenLED.writeSync(0);
     redLED.writeSync(0);
     blueLED.writeSync(0);
   }
 });
+
+blue.setActiveLow( true );
 blue.watch(function(err, value) {
   if( value ) {
     if( redOn ) {
       greenLED.writeSync(1);
-      port.write('GREEN\n');
+      arduino.write('GREEN\n');
       redLED.writeSync(0);
       blueLED.writeSync(0);
 
      } else if( value ) {
+      redLED.writeSync(0);
+      greenLED.writeSync(0);
       blueLED.write(1);
-      port.write('BLUE\n');
+      arduino.write('BLUE\n');
     } 
     blueOn = true;
   } else {
@@ -63,7 +64,7 @@ blue.watch(function(err, value) {
     greenLED.writeSync(0);
     redLED.writeSync(0);
     blueOn = false;
-    port.write('OFF\n');
+    arduino.write('OFF\n');
   }
 });
 
