@@ -41,12 +41,12 @@ red.watch(function(err, value) {
       blueLED.write(1);
       arduino.write('BLUE\n');
     } else {
-      redOn = false;
       arduino.write('OFF\n');
       greenLED.writeSync(0);
       redLED.writeSync(0);
       blueLED.writeSync(0);
     }
+    redOn = false;
   }
 });
 
@@ -76,10 +76,9 @@ blue.watch(function(err, value) {
       blueLED.writeSync(0);
       greenLED.writeSync(0);
       redLED.writeSync(0);
-      blueOn = false;
       arduino.write('OFF\n');
     }
-
+    blueOn = false;
   }
 });
 
